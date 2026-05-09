@@ -1,51 +1,14 @@
 model_list:
-  - model_name: gpt-4
-    litellm_params:
-      model: openai/gpt-4
-      api_key: "${OPENAI_API_KEY}"
-
-  - model_name: gpt-4-turbo
-    litellm_params:
-      model: openai/gpt-4-0125-preview
-      api_key: "${OPENAI_API_KEY}"
-
-  - model_name: gpt-3.5-turbo
-    litellm_params:
-      model: openai/gpt-3.5-turbo
-      api_key: "${OPENAI_API_KEY}"
-
-  - model_name: azure-gpt-4
-    litellm_params:
-      model: azure/gpt-4
-      api_base: "${AZURE_API_BASE}"
-      api_key: "${AZURE_API_KEY}"
-      api_version: "2024-02-01"
-
-  - model_name: claude-3-opus
-    litellm_params:
-      model: anthropic/claude-3-opus-20240229
-      api_key: "${ANTHROPIC_API_KEY}"
-
-  - model_name: claude-3-sonnet
-    litellm_params:
-      model: anthropic/claude-3-sonnet-20240229
-      api_key: "${ANTHROPIC_API_KEY}"
-
-  - model_name: ollama-llama3
-    litellm_params:
-      model: ollama/llama3
-      api_base: "${OLLAMA_API_BASE:-http://ollama:11434}"
-
   - model_name: ollama-mistral
     litellm_params:
       model: ollama/mistral
-      api_base: "${OLLAMA_API_BASE:-http://ollama:11434}"
+      api_base: os.environ/OLLAMA_API_BASE
 
-  - model_name: MiniMax-M2.7
+  - model_name: minimax-m27
     litellm_params:
       model: minimax/MiniMax-M2.7
-      api_key: "${MINIMAX_API_KEY}"
-      api_base: "${MINIMAX_API_BASE:-https://api.minimax.io/v1}"
+      api_key: os.environ/MINIMAX_API_KEY
+      api_base: https://api.minimax.io/v1
 
 litellm_settings:
   drop_params: true
@@ -53,5 +16,5 @@ litellm_settings:
   failure_callback: ["prometheus"]
 
 general_settings:
-  master_key: "${LITELLM_MASTER_KEY}"
-  ui_access_mode: "admin"
+  master_key: os.environ/LITELLM_MASTER_KEY
+  ui_access_mode: admin
