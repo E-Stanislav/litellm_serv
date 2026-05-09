@@ -41,10 +41,11 @@ model_list:
       model: ollama/mistral
       api_base: "${OLLAMA_API_BASE:-http://ollama:11434}"
 
-  - model_name: MiniMax-Text-01
+  - model_name: MiniMax-M2.7
     litellm_params:
-      model: minimax/MiniMax-Text-01
+      model: minimax/MiniMax-M2.7
       api_key: "${MINIMAX_API_KEY}"
+      api_base: "${MINIMAX_API_BASE:-https://api.minimax.io/v1}"
 
 litellm_settings:
   drop_params: true
