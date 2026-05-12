@@ -10,9 +10,7 @@ services:
       - ./config.yaml:/app/config.yaml
     env_file:
       - .env
-    command:
-      - "--config"
-      - "/app/config.yaml"
+    command: ["--config", "/app/config.yaml"]
     environment:
       LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-master-key}"
       UI_USERNAME: "${UI_USERNAME:-admin}"
@@ -20,29 +18,19 @@ services:
       STORE_MODEL_IN_DB: "False"
       DATABASE_URL: "postgresql://litellm:litellm_secret@postgres:5432/litellm_db"
       DATABASE_TYPE: "postgresql"
-
-      # Redis для кэширования (опционально)
-      REDIS_HOST: "redis"
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
-
-      # Настройки логирования
-      LITELLM_LOG_LEVEL: "${LITELLM_LOG_LEVEL:-LITELLM_LOG_LEVEL:info}"
-
-      # UI для управления (опционально)
+      LITELLM_LOG_LEVEL: "${LITELLM_LOG_LEVEL:-info}"
       LITELLM_DASHBOARD: "True"
-
-      # CORS
       CORS_ALLOW_ORIGINS: "*"
-
-      # Лимиты по умолчанию
-      LITELLM_MAX_PARALLEL_REQUESTS: 100
-      LITELLM_REQUEST_TIMEOUT: 60
+      LITELLM_MAX_PARALLEL_REQUESTS: "100"
+      LITELLM_REQUEST_TIMEOUT: "60"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - litellm-network
@@ -56,8 +44,6 @@ services:
       POSTGRES_DB: litellm_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
     restart: unless-stopped
     networks:
       - litellm-network
@@ -70,14 +56,19 @@ services:
   redis:
     image: redis:7-alpine
     container_name: litellm-redis
-    command: redis-server --requirepass "${REDIS_PASSWORD:-}" --appendonly yes
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass "$${REDIS_PASSWORD}"'
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
     volumes:
       - redis_data:/data
-    ports:
-      - "6379:6379"
     restart: unless-stopped
     networks:
       - litellm-network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
 volumes:
   postgres_data:

@@ -11,6 +11,7 @@ model_list:
       api_base: https://api.minimax.io/v1
 
 litellm_settings:
+  json_logs: true
   drop_params: true
   success_callback: ["prometheus"]
   failure_callback: ["prometheus"]
@@ -18,3 +19,12 @@ litellm_settings:
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
   ui_access_mode: admin
+  debug: true
+  log_level: "DEBUG"
+  database_connection_pool_limit: 5
+  disable_error_logs: true
+  allow_requests_on_db_unavailable: false
+  store_model_in_db: true
+  store_prompts_in_spend_logs: true
+  maximum_spend_logs_retention_period: "7d"   # Delete logs older than 7 days
+  maximum_spend_logs_retention_interval: "1d"  # Run once per day
